@@ -1,0 +1,329 @@
+\documentclass{article}
+
+\usepackage{rotating}
+\usepackage{graphics}
+\usepackage{latexsym}
+\usepackage{color}
+\usepackage{listings} % allows for importing code scripts into the tex file
+\usepackage{wrapfig} % allows wrapping text around a figure
+\usepackage{lipsum} % provides Latin text to fill up a page in this illustration (do not need it otherwise!)
+
+% Approximately 1 inch borders all around
+\setlength\topmargin{-.56in}
+\setlength\evensidemargin{0in}
+\setlength\oddsidemargin{0in}
+\setlength\textwidth{6.49in}
+\setlength\textheight{8.6in}
+
+% Options for code listing; from Patrick DeJesus, October 2016
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\lstdefinestyle{mystyle}{
+	backgroundcolor=\color{backcolour},   commentstyle=\color{codegreen},
+	keywordstyle=\color{magenta},
+	numberstyle=\tiny\color{codegray},
+	stringstyle=\color{codepurple},
+	basicstyle=\footnotesize,
+	breakatwhitespace=false,         
+	breaklines=true,                 
+	captionpos=b,                    
+	keepspaces=true,                 
+	numbers=left,                    
+	numbersep=5pt,                  
+	showspaces=false,                
+	showstringspaces=false,
+	showtabs=false,                  
+	tabsize=2
+}
+
+%"mystyle" code listing set
+\lstset{style=mystyle}
+%\lstset{inputpath=appendix/}
+
+
+\title{Expenditures of Warwick and Monroe} 
+\author{Kelso Quan}
+
+
+\begin{document} 
+
+\maketitle
+\begin{center}
+\Large{Abstract}
+\end{center}
+\qquad The study wanted to predict expenditures of New York cities, Warwick and Monroe. By gaining insight, the city council would like to know if its city will be spending more money  due to proposed construction of new housing projects and a possible growing population within city limits. While the cities are small to begin with, it is still a good idea to prepare for the future whether that be raising property taxes or looking for other sources of revenue. Looking into six predictor variables, a log linear trend was found between the resulting log transformed expenditure of the two cities and its six indicators. Furthermore, the pattern continued into the 2005 and 2025 predicted expenditures. It is noted that the predictions were made with a subset that required (log(pop) $>$ 8.3 \& log(dens) $>$ 4.5). Using the all six log transformed predictors, it was possible to come up with expenditure predictions. It was evident that there was a log positive trend with the six predictors (population, density, ''percent intergovernmental'', income, growth rate, and wealth), and the expenditures of both towns were going to increase over time. 
+
+\section{Introduction}
+\qquad In 1992, data was taken over a number of municipalities in New York state. By using the 914 observations taken, Warwick and Monroe city council should indeed plan for slightly higher expenditures by the city to keep up with the growing population possibly due to the planned housing projects. The $99\%$ confident intervals of each coefficient can be seen in Table \ref{coefficients}. These figures have been rounded. Please see the appendix for more exact numbers. The numbers in Table \ref{coefficients} have been transformed back. For example, every 1 unit (thousands) of wealth increased, the expenditure of Warwick and Monroe goes up by roughly \$1.50. 
+
+Pint stands for ``Percent Intergovernmental'' which represents the percentage of revenue coming from state and federal grants subsidies. From Table \ref {predictions}, we have the prediction of expenditures in thousands. For exact figures, refer to the appendix. There is a slight positive linear trend while looking at the prediction intervals for Monroe, but it is noticeably more pronounce in Warwick's prediction of expenditures. 
+
+\section{Methods}
+
+\qquad The data was drawn from 916 municipalities in the state of New York in 1992. Two observations (i.e. Warwick and Monroe) were missing dataset. The purpose of the analysis is to predict expenditures of Warwick and Monroe from the data of 914 other municipalities. There was a municipality of interest which was included in the analysis. The observation 225 is influential point shown in figure \ref{cook}. While it is possible to remove this influential point, observation 225 was still a municipality of New York state. Removing it didn't change the model selection and thus was kept. The model selection and all analysis was done in R Studio to predict future expenditures.
+
+\section{Results}
+
+\subsection{Exploratory Data Analysis}
+
+\qquad A boxcox transformation confirms that the response should be log transformed since $\lambda$ is near zero. Creating a histogram of the response variable expenditure shows a need for a log transformation. After the log transformation, the histogram of log-expenditure in figure \ref{response} shows lexpen is approximately normal. Taking a simple look at the predictor variables showed that they needed to be log transformed at least once before proceeding further. Histograms can be seen in figure \ref{regular} showed that there was heavy right skewness to all predictors before log transformations.  After log transformation, seen in figure \ref{transformed} showed nicer normality of each predictor. 
+
+\quad Afterwards, the variable log expenditure was plotted against each of its predictor illustrated in figure \ref{scatterplots}. Each plot looked fairly linear. There didn't seem like an clear trends while plotting the residuals, thus no violation of homoscedasticity which can be seen in figure \ref{residuals}. There's no clear trends in the residuals and appeared to be random which is good news for linear regression. The QQ plot appears linear which suggest that the data is approximately normal after log transformations. 
+
+\qquad In figure \ref{subset}, shows that there's a possible quadratic function, but the data could also be subsetted. This analysis focused on the subsetted data where log(pop) $>$ 8.3 and log(dens) $>$ 4.5 before more exploratory analysis was done. It is clear that the data must be subsetted. The blue lines shown in figure \ref{subset}, where the data should be subsetted.
+
+\begin{figure}
+  \begin{center}
+    \caption{Log Dens and Log Pop before subsetting}
+      \label{subset}
+<<Reason for subsetted data, echo = FALSE, out.width ="50%" >>=
+library(MASS)
+options(warn=-1)  # forces R to ignore all warning messages
+ny<-read.table("C:/Users/Kelso Quan/Documents/SchoolWork/Stat696/NYExpend/cs73.dat",header=T);
+ny2<-na.omit(ny); 
+attach(ny2)
+lpop=log(pop)
+ldens = log(dens)
+par(mfrow= c(2, 1))
+lpop=log(pop)
+ldens = log(dens)
+lexpen = log(expen)
+plot(x = lpop, y = lexpen, xlab = "log population", ylab = "log expenditure")
+lines(lowess(lpop,lexpen), col=2)
+lines(c(8.3,8.3), c(0,6), col = "blue", lwd = 3)
+plot(x = ldens, y = lexpen, xlab = "log density", ylab = "log expenditure")
+lines(lowess(ldens, lexpen), col = 2)
+lines(c(4.5,4.5), c(0,6), col = "blue", lwd = 3)
+set2 = (lpop > 8.3 & ldens > 4.5) #specification of the analysis
+lexpen<-log(expen[set2])
+lwealth<-log(wealth[set2])
+lpop<-log(pop[set2])
+ldens<-log(dens[set2])
+lincome<-log(income[set2])
+lpint <- log(pint[set2])
+lgrowr<-ifelse(growr[set2]>0, log(growr[set2]+1), -log(-growr[set2]+1))
+fit1<-lm(lexpen~lwealth+lpop+lpint+ldens+lincome+lgrowr) 
+@
+  \end{center}
+\end{figure}
+
+\begin{figure}
+\begin{center}
+\caption{Log Transforming Response Variable: Expenditures}
+\label{response}
+<<Log transform Response, echo = FALSE, out.height= "25%", out.width= "50%">>=
+par(mfrow = c(1,2))
+hist(expen[set2], main = "Expenditures")
+hist(lexpen, main = "Log Expenditures")
+par(mfrow = c(1,1))
+@
+\end{center}
+\end{figure}
+
+\subsection{Model Fitting/Inferences}
+\qquad After log transforming all variables, a correlation matrix should be examined. The correlation matrix showed that there were some highly correlated covariates shown in the appendix. Log pop and log density .8 correlation with log wealth and log income had .75 correlation. Such highly correlated variables could be dropped from the analysis due to parsimony, but a quickly glance at the Variance Inflation Factor table \ref{vif} shows no serious violations of numbers being greater than 7. With that said, the analysis kept all of its predictors.  
+
+\qquad Using the function stepAIC, it was shown that the linear log log model was the best fit and modeled the data with the least amount of penalties. stepAIC is a function that fits possible models from the data given. Every possible model is given a penalty marker. The least amount of penalties, the better the model comes out to be. Looking at the stepAIC results were preferable compared to looking at coefficients from summary of the model and then manually dropping predictors one at a time before achieving the best fitted model.  This fit was reasonable because all, but the log-transformed density variable had less than a 0.05 p-value. Since the p-value of log-density wasn't that much higher than .05 and .05 was an arbitrary benchmark, the predictor log-density was left in. Further investigation into this model showed an influential point (obs 225) that was left in. While it is feasible to remove an outlier, it was kept in the analysis to account for extremities of the New York state. It is quite possible that observation 225 was Manhattan. With 914 observations, removing a single outlier probably will not change the model selection. Looking at figure \ref{cook}, the plot shows the predicted model with observation 225. The removal of observation 225 only slightly increases $R^2$  coefficient. $R^2$ is a statistical measure of how close the data are to the fitted regression line. I.e. how well the model explains the data set. Thus the outlier was retained in this analysis.
+
+\begin{table}[h!]
+  \begin{center}
+    \caption{$95 \%$ Confidence Intervals of model's coefficients}
+    \label{coefficients}
+    \begin{tabular}{l|l|l} 
+      \textbf{Coefficient} & \textbf{Lower Bound} & \textbf{Upper Bound}\\
+      \hline
+      Wealth   &  1.3 & 1.7 \\
+      Pop       &  1.1 & 1.3 \\
+      Pint       &  0.67 & 0.79 \\
+      Dens      &  0.85 & 1.0\\
+      Income  &   1.1 & 1.7 \\
+      Growr    & 0.95 & 0.99 \\
+      
+    \end{tabular}
+  \end{center}
+\end{table}
+
+\qquad From the model, expenditures by Warwick and Monroe can be predicted for the years 1992, 2005, and 2025. Those predicted expenditure values can be seen in table \ref{predictions}. These predictions should be kept in the minds of the city councils of Monroe and Warwick when they create annual budgets. In addition, the coefficients of each predictor can be found in table \ref{coefficients}. While it may look like the prediction intervals and estimated expenditures for Monroe remain fairly constant, the unrounded figures in the table within the appendix shows that there are slight increases over time. This may be due to Monroe being a small town. 
+\begin{table}[h!]
+  \begin{center}
+    \caption{$95 \%$ Predictions Intervals of Warwick and Monroe Expenditures}
+    \label{predictions}
+    \begin{tabular}{c | c | c | c | c} \hline
+      \textbf{Town} & \textbf{Year} & \textbf{Expen Est.} & \textbf{Lower Bound} & \textbf{Upper Bound}\\
+      \hline
+     Warwick & 1992 & 250 & 130 & 460 \\
+                  & 2005 & 270 & 140 & 500 \\
+                  & 2025 & 280 & 150 & 520 \\
+                  \hline
+	Monroe & 1992 & 250 & 130 & 460 \\
+		     & 2005 & 250 & 140 & 470 \\
+		     & 2025 & 250 & 140 & 470 \\
+      
+    \end{tabular}
+  \end{center}
+\end{table}
+
+\begin{figure}
+  \begin{center}
+    \caption{Cook's Distance}
+      \label{cook}
+<<Cooks Distance, echo = FALSE, out.width = "40%">>=
+plot(fit1, which=4, cook.levels=cutoff) # influence Plot
+@
+\end{center}
+\end{figure}
+
+\section{Conclusion}
+\qquad In this analysis, it has shown that the expenditures of the New York municipalities Warwick and Monroe will most likely increase due to proposed construction of new housing projects. The two towns should look for methods to increase funds whether it be increasing property tax, increasing sales tax, or another method. Table \ref{predictions} has shown positive linear trend in expenditures for both towns. Warwick should find sources of revenue quicker than Monroe due to its ever increasing expenditures.
+
+\qquad This analysis was limited in three ways. The first way was that the outlier was not taken out of the dataset even though it was looked at. $R^2$ may have increased by .05 without the outlier, but the model would have stay the same either way. Second, the analysis stuck to a linear log log model. There were a couple of predictors that were worth examining at a higher power. But not having variables log transformed would have prove disastrous. The last limitation was that the data was subsetted (log(pop) $>$ 8.3 \& log(dens) $>$ 4.5), thus data set with log(pop) $<$ 8.3 and log(dens) $<$ 4.5 was not considered. Presently, it is not clear why a subset of that nature should be looked at, but that data set may hold valuable information for Warwick and Monroe. For the future, these three limitations could be explored, but for now, this analysis should suffice. 
+
+\qquad Since there is data on 1992 and 2005, it is possible to compare those actual values to the analysis' predicted values. It would be very interesting to see if those values lined up. If the values are no where close, then another model must be considered. In addition, would this model hold up to states similar to New York? With a little further investigation, surely, that question can be answered. 
+
+%
+\newpage
+\noindent \Large{{\bf Appendix A: Auxiliary Graphics and Tables}}
+
+%
+\begin{figure}
+\caption{BoxCox Transformation of Response Variable}
+<<BoxCox plot, echo = FALSE, out.height= "50%">>=
+bc = boxcox(expen~ ., data=ny2)
+bc$x[bc$y==max(bc$y)]
+@
+\end{figure}
+%
+\begin{figure}
+\begin{center}
+\caption{Homoscedasticity}
+\label{residuals}
+<<Homoscedasticity, echo = FALSE>>=
+par(mfrow = c(2,2))
+fit1<-lm(lexpen~lwealth+lpop+lpint+ldens+lincome+lgrowr) 
+plot(fit1)
+@
+\end{center}
+\end{figure}
+%
+
+<< Correaltion Matrix, echo = FALSE>>=
+library(corrplot)
+nydata <- data.frame(lexpen, lwealth, lpop, lpint, ldens, lincome, lgrowr)
+cormat <-cor(nydata)
+corrplot(cormat)
+@
+
+%
+\begin{figure}
+  \begin{center}
+    \caption{Histograms of Not Transformed Predictors}
+      \label{regular}
+<<Not Transformed Predictors, echo = FALSE, out.height = "30%">>=
+par(mfrow = c(1,2))
+hist(wealth[set2], main = "Wealth")
+hist(pop[set2], main = "Population")
+hist(dens[set2], main = "Density")
+hist(income[set2], main = "Income") #kinda better than lincome
+hist(pint[set2], main = "Log Percent Intergovernment") 
+hist(growr[set2], main = "Log Growth Rate")
+@
+  \end{center}
+\end{figure}
+%
+\begin{figure}
+  \begin{center}
+    \caption{Histograms of Log Transformed Predictors}
+      \label{transformed}
+<<Log Transformed Predictors, echo = FALSE, out.height = "30%">>=
+par(mfrow = c(1,2))
+hist(lwealth, main = "Log Wealth") #lwealth is "normal"
+hist(lpop, main = "Log Population") #close to "normal"
+hist(ldens, main = "Log Density") #terrible
+hist(lincome, main = "Log Income")
+hist(lpint, main = "Log Percent Intergovernment") 
+hist(lgrowr, main = "Log Growth Rate")
+@
+  \end{center}
+\end{figure}
+%
+\begin{figure}
+\begin{center}
+\caption{Log Expenditures vs Covariates}
+\label{scatterplots}
+<<Expend vs Covariates, echo = FALSE, out.width = "70%">>=
+par(mfrow = c(3,2))
+plot(lwealth, lexpen, main = "Log Wealth vs Log Expenditures") 
+lines(lowess(lwealth,lexpen), col=2) #lwealth is linear
+plot(lincome, lexpen, main = "Log Income vs Log Expenditures")
+lines(lowess(lincome,lexpen), col=2) #lincome is linear
+plot(lpop, lexpen, main = "Log Population vs Log Expenditures")
+lines(lowess(lpop,lexpen), col=2) #lpop is linear
+plot(lpint, lexpen , main = "Log % Intergovernment vs Log Expenditures")
+lines(lowess(lpint,lexpen), col=2) #lpint is linear-ish
+plot(ldens, lexpen , main = "Log Density vs Log Expenditures")
+lines(lowess(ldens,lexpen), col=2) #ldens is linear-ish
+plot(lgrowr, lexpen, main = "Log Growth Rate vs Log Expenditures")
+lines(lowess(lgrowr,lexpen), col=2) #lgrowr is linear-ish
+par(mfrow = c(1,1))
+@
+\end{center}
+\end{figure}
+%
+
+%
+\begin{table}[h!]
+  \begin{center}
+    \caption{Variance Inflation Factor}
+    \label{vif}
+    \begin{tabular}{c | c | c | c | c | c} \hline
+      \textbf{Lwealth} & \textbf{Lpop} & \textbf{Lpint} & \textbf{Ldens} & \textbf{Lincome}& \textbf{Lgrowr}\\
+      \hline
+     2.4 & 3.4 & 1.1 & 4.0 & 2.8 & 1.2 \\
+    \end{tabular}
+    \end{center}
+\end{table}
+%
+\begin{table}[h!]
+  \begin{center}
+    \caption{$95 \%$ Confidence Intervals of model's coefficients}
+       \begin{tabular}{l|l|l} 
+      \textbf{Coefficient} & \textbf{Lower Bound} & \textbf{Upper Bound}\\
+      \hline
+      (Intercept) & 0.03791628 & 0.7578978 \\
+Lwealth     & 1.33904808 & 1.6666506 \\
+Lpop        & 1.06202032 & 1.2521650 \\
+Lpint       & 0.67044390 & 0.7946076 \\
+Ldens       & 0.85051014 & 1.0037347 \\
+Lincome     & 1.07781031 & 1.6605132 \\
+Lgrowr      & 0.95239659 & 0.9989585 \\
+      
+    \end{tabular}
+  \end{center}
+\end{table}
+                
+\begin{table}[h!]
+  \begin{center}
+    \caption{$95 \%$ Predictions Intervals of Warwick and Monroe Expenditures}
+    
+    \begin{tabular}{c | c | c | c | c} \hline
+      \textbf{Town} & \textbf{Year} & \textbf{Expen Est.} & \textbf{Lower Bound} & \textbf{Upper Bound}\\
+      \hline
+     Warwick & 1992 & 248.2336 & 133.1536 & 462.773 \\
+             & 2005 & 268.8325 & 144.0641 & 501.658 \\
+             & 2025 & 277.8198 & 148.6064 & 519.3843 \\
+                  \hline
+	Monroe & 1992 & 248.0169 & 133.4198 & 461.0441 \\
+		     & 2005 & 253.7929 & 136.4834 & 471.9316 \\
+		     & 2025 & 254.4445 & 136.7075 & 473.5805 \\
+      
+    \end{tabular}
+  \end{center}
+\end{table}
+
+
+\newpage
+\noindent \Large{{\bf Appendix B: R Code}}
+\lstinputlisting[language=R, caption = Warwick and Monroe]{NYexpen.R}
+\end{document}

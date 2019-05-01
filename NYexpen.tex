@@ -1,0 +1,114 @@
+\documentclass{article}
+
+\usepackage{rotating}
+\usepackage{graphics}
+\usepackage{latexsym}
+\usepackage{color}
+\usepackage{listings} % allows for importing code scripts into the tex file
+\usepackage{wrapfig} % allows wrapping text around a figure
+\usepackage{lipsum} % provides Latin text to fill up a page in this illustration (do not need it otherwise!)
+
+% Approximately 1 inch borders all around
+\setlength\topmargin{-.56in}
+\setlength\evensidemargin{0in}
+\setlength\oddsidemargin{0in}
+\setlength\textwidth{6.49in}
+\setlength\textheight{8.6in}
+
+% Options for code listing; from Patrick DeJesus, October 2016
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\lstdefinestyle{mystyle}{
+	backgroundcolor=\color{backcolour},   commentstyle=\color{codegreen},
+	keywordstyle=\color{magenta},
+	numberstyle=\tiny\color{codegray},
+	stringstyle=\color{codepurple},
+	basicstyle=\footnotesize,
+	breakatwhitespace=false,         
+	breaklines=true,                 
+	captionpos=b,                    
+	keepspaces=true,                 
+	numbers=left,                    
+	numbersep=5pt,                  
+	showspaces=false,                
+	showstringspaces=false,
+	showtabs=false,                  
+	tabsize=2
+}
+
+%"mystyle" code listing set
+\lstset{style=mystyle}
+%\lstset{inputpath=appendix/}
+
+
+\title{Expenditures of Warick and Monroe} 
+\author{Kelso Quan}
+
+
+\begin{document} 
+
+\maketitle
+\section{Executive Summary}
+
+\qquad The study wanted to predict expenditures of New York cities, Warwick and Monroe. By gaining insight, the city council would like to know if its city will be spending more money in its city due to proposed construction of new housing projects and a possible growing population within city limits. While the cities are small to begin with, it is still a good idea to prepare for the future whether that be rasing property tax or looking for other sources of revenue. Looking into six predictor variables, a log linear trend was found between the resulting expenditure of the two cities and its six indictators. Furthermore, the pattern continued into the 2005 and 2025 predicted expenditures. It is noted that the predictions were made with a subset that required (log(pop) $>$ 8.3 \& log(dens) $>$ 4.5). Using the all six log transformed predictors, it was possible to come up with expenditure predictions. It was evident that there was a log positive trend with the six predictors (population, density, ''percent intergovermental'', income, growth rate, and wealth), that the expendenitures of both towns were going to increase over time. 
+
+\section{Introduction}
+\qquad In 1992, data was taken over a number of municipalities in New York state. By using the 914 observations taken, Warwick and Monroe city council should indeed plan for slightly higher if not moderate expenditure by the city to keep up with the growing population possibly due to the planned housing projects. The $99\%$ confident intervals of each coefficient can be seen in Table \ref{coefficients}. These figures have been rounded. Please see the appendix for more exact numbers. The numbers in Table \ref{coefficients} have not been log-transformed. For example, every 1 unit (thousands) of wealth increased, the expenditure of Warwick and Monroe goes up by roughly \$1.5k. 
+\begin{table}[h!]
+  \begin{center}
+    \caption{$95 \%$ Confidence Intervals of model's coefficients}
+    \label{coefficients}
+    \begin{tabular}{l|l|l} 
+      \textbf{Coefficient} & \textbf{Lower Bound} & \textbf{Upper Bound}\\
+      \hline
+      wealth   &  1.3 & 1.7 \\
+      pop       &  1.1 & 1.3 \\
+      pint       &  0.67 & 0.79 \\
+      dens      &  0.85 & 1.0\\
+      income  &   1.1 & 1.7 \\
+      growr    & 0.95 & 0.99 \\
+      
+    \end{tabular}
+  \end{center}
+\end{table}
+Pint stands for ``Percent Intergovernmental'' which is represents the precentage of revenue coming from state and federal grants subsidies. From Table \ref {predictions}, we have the predictions of expenditures in thousands. For exact figures, refer to the appendix. There is a slight positive linear trend while looking at the prediction intervals for Monroe, but it is noticeable more pronounce in Warwick's prediction of expenditures. 
+\begin{table}[h!]
+  \begin{center}
+    \caption{$95 \%$ Predictions Intervals of Warwick and Monroe Expenditures}
+    \label{predictions}
+    \begin{tabular}{c | c | c | c | c} \hline
+      \textbf{Town} & \textbf{Year} & \textbf{Expen Est.} & \textbf{Lower Bound} & \textbf{Upper Bound}\\
+      \hline
+     Warwick & 1992 & 250 & 130 & 460 \\
+                  & 2005 & 270 & 140 & 500 \\
+                  & 2025 & 280 & 150 & 520 \\
+                  \hline
+	Monroe & 1992 & 250 & 130 & 460 \\
+		     & 2005 & 250 & 140 & 470 \\
+		     & 2025 & 250 & 140 & 470 \\
+      
+    \end{tabular}
+  \end{center}
+\end{table}
+
+\section{Summary Information}
+\qquad Taking a simple look at the predictor varibles showed that they needed to be log transformed at least once before proceeding. A simple histogram of each predictor showed log transformation was much needed. Afterwards, the variable expenditure was plotted against each of its predictor. Each plot looked fairly linear. There didn't seem like an clear trends while plotting the residuals, thus no homoscedasticity. Using the function stepAIC, it was shown that the linear model of the fit
+  \begin{equation}
+  \label{fit}
+    \log (expen_i) = \log (wealth_i)+ \log (pop_i)+\log (pint_i)+\log(dens_i)+\log(income_i)+\log(growr_i)
+  \end{equation}
+  was the best fit and modeled the data with the least amount of penalties. This fit was pretty good because all, but the log-transformed density variable had less than a 0.5 p-value. Futher investigation into this model showed an influential point (obs 225) that was left in. While it is feasible to remove an outlier, it was kept in the analysis to account for extremity of the New York state. It is quite possible that observation 225 was Manhattan. With 914 observations, removing a single outlier probably will not change model selection. Log linear is the way to go.  
+  
+\section{Satistical Analysis}
+The analysis was kept to a linear log transformation. Every predictor needed to be log-transformed before further conduting anything else. 
+\section{Conclusion}
+
+
+\newpage
+\noindent \Large{{\bf Appendix B: R Code}}
+
+\lstinputlisting[language=R, caption = Warwick and Monroe]{NYexpen.R}
+
+\end{document}

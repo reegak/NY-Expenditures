@@ -1,0 +1,141 @@
+% Stat 696: Knitr illustration for online video
+% Illustrating knitr to present analyses of College data from ISLR text
+% Packages required: knitr, xtable, stargazer, ISLR
+% To use, make sure to call library(knitr) first in console
+% To run and create a .tex file: knit('knitr_ClassVersion.Rnw') in R
+% August 24, 2017
+
+% Preface required in the knitr RnW file
+\documentclass{article}
+
+\usepackage{rotating}
+\usepackage{graphics}
+\usepackage{latexsym}
+\usepackage{color}
+\usepackage{listings} % allows for importing code scripts into the tex file
+\usepackage{wrapfig} % allows wrapping text around a figure
+\usepackage{lipsum} % provides Latin text to fill up a page in this illustration (do not need it otherwise!)
+
+% Approximately 1 inch borders all around
+\setlength\topmargin{-.56in}
+\setlength\evensidemargin{0in}
+\setlength\oddsidemargin{0in}
+\setlength\textwidth{6.49in}
+\setlength\textheight{8.6in}
+
+% Options for code listing; from Patrick DeJesus, October 2016
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\lstdefinestyle{mystyle}{
+	backgroundcolor=\color{backcolour},   commentstyle=\color{codegreen},
+	keywordstyle=\color{magenta},
+	numberstyle=\tiny\color{codegray},
+	stringstyle=\color{codepurple},
+	basicstyle=\footnotesize,
+	breakatwhitespace=false,         
+	breaklines=true,                 
+	captionpos=b,                    
+	keepspaces=true,                 
+	numbers=left,                    
+	numbersep=5pt,                  
+	showspaces=false,                
+	showstringspaces=false,
+	showtabs=false,                  
+	tabsize=2
+}
+%"mystyle" code listing set
+\lstset{style=mystyle}
+%\lstset{inputpath=appendix/}
+
+
+\title{Stat 696, Example Application of \texttt{knitr}} 
+\author{Professor Levine}
+
+\usepackage{Sweave}
+\begin{document} 
+\input{kniter-concordance}
+\maketitle
+
+% Code to start knitr
+\begin{Schunk}
+\begin{Sinput}
+>   library(knitr)
+> opts_chunk$set(
++   concordance=TRUE
++ )
+\end{Sinput}
+\end{Schunk}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Code snippet to load in libraries and data  
+% THIS IS HOW R-CODE IS READ INTO LaTeX DOC WITH knitr
+% Environment:  
+% <<...>>=  
+% [Code here] 
+% @
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{Schunk}
+\begin{Sinput}
+> # Load in libraries, load in data and set up variables
+> library(ISLR)
+> library(stargazer)
+> library(xtable)
+> rm(list=ls(all=TRUE)) # remove all previous objects from memory
+> # Set up data for the illustration
+> # For illustration purposes we will use the College data set from the ISLR text
+> # Create an indicator of Elite College status (see exercise 8 in Ch. 2 of ISLR text)
+> Elite=rep("No",nrow(College))
+> Elite[College$Top10perc >50]="Yes"
+> Elite=as.factor(Elite)
+> College=data.frame(College ,Elite)
+> numvars = length(College) # number of variables in the College data set
+> n = dim(College)[1]
+\end{Sinput}
+\end{Schunk}
+
+First let's present an R-dump of the top of the College data set.  We emphasize that you would not include this in your data analysis report.  In this document, we just wish to illustrate how this is done in \texttt{knitr}.
+% Short view of the data
+\begin{Schunk}
+\begin{Sinput}
+> head(College)
+\end{Sinput}
+\begin{Soutput}
+                             Private Apps Accept Enroll Top10perc Top25perc
+Abilene Christian University     Yes 1660   1232    721        23        52
+Adelphi University               Yes 2186   1924    512        16        29
+Adrian College                   Yes 1428   1097    336        22        50
+Agnes Scott College              Yes  417    349    137        60        89
+Alaska Pacific University        Yes  193    146     55        16        44
+Albertson College                Yes  587    479    158        38        62
+                             F.Undergrad P.Undergrad Outstate Room.Board Books
+Abilene Christian University        2885         537     7440       3300   450
+Adelphi University                  2683        1227    12280       6450   750
+Adrian College                      1036          99    11250       3750   400
+Agnes Scott College                  510          63    12960       5450   450
+Alaska Pacific University            249         869     7560       4120   800
+Albertson College                    678          41    13500       3335   500
+                             Personal PhD Terminal S.F.Ratio perc.alumni Expend
+Abilene Christian University     2200  70       78      18.1          12   7041
+Adelphi University               1500  29       30      12.2          16  10527
+Adrian College                   1165  53       66      12.9          30   8735
+Agnes Scott College               875  92       97       7.7          37  19016
+Alaska Pacific University        1500  76       72      11.9           2  10922
+Albertson College                 675  67       73       9.4          11   9727
+                             Grad.Rate Elite
+Abilene Christian University        60    No
+Adelphi University                  56    No
+Adrian College                      54    No
+Agnes Scott College                 59   Yes
+Alaska Pacific University           15    No
+Albertson College                   55    No
+\end{Soutput}
+\end{Schunk}
+
+
+We can also present results in the text using {\tt Sexpr}.  For example, in the College data set, there are 19 variables and the sample size is $n = $ 777.  Now let us replicate the \LaTeX\ document we created earlier in this video.
+
+Let us start with an example from {\tt stargazer}.  I cut-and-pasted the \LaTeX\ code created by stargazer in R.  Recall we added a caption and label to reference the table.  Table~\ref{descrips} presents summary statistics for the College data set.  {\em Here you would then provide a brief description of the variables and any interesting findings about the statistics displayed.}
+% We <<echo=FALSE>> to ask knitr not to present the R code in the output.
+% We use results="asis" to force knitr to present the table code for compiling in LaTeX.

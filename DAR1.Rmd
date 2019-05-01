@@ -1,0 +1,117 @@
+---
+title: "DAR1"
+author: "Kelso Quan"
+date: "October 2, 2018"
+output: pdf_document
+---
+```{r}
+library(MASS)
+library(corrplot)
+library(car)
+#install.packages("leaps")
+library(leaps)
+
+options(warn=-1)  # forces R to ignore all warning messages
+ny<-read.table("C:/Users/Kelso Quan/Documents/SchoolWork/Stat696/cs73.dat",header=T); dim(ny)
+ny2<-na.omit(ny); dim(ny2) # 914  11
+attach(ny2)
+names(ny2)
+
+# look at the density of each variable especially response
+# because response looks log normal argue that it needs a log transform
+lpop=log(pop)
+ldens = log(dens)
+set2 = (lpop > 8.3 & ldens > 4.5) #specification of the analysis
+hist(expen[set2])
+lexpen<-log(expen[set2])
+hist(lexpen) #lexpen is "normal"
+hist(wealth[set2])
+lwealth<-log(wealth[set2])
+hist(lwealth) #lwealth is "normal"
+hist(pop[set2])
+lpop<-log(pop[set2])
+hist(lpop)
+lpop2<-lpop**2
+lpop3<-lpop**3
+hist(lpop2) #closest to "normal"?
+hist(lpop3)
+hist(dens[set2])
+ldens<-log(dens[set2])
+hist(ldens)
+ldens2<-ldens**2
+ldens3<-ldens**3
+hist(ldens2)
+hist(ldens3) #i don't want to go higher than cubic
+hist(income[set2])
+lincome<-log(income[set2])
+hist(lincome)
+i2 = lincome^2
+i3 = lincome^3
+hist(i2) #i2 closest to "normal"
+hist(i3)
+
+hist(pint[set2])
+lpint <- log(pint[set2])
+hist(lpint) #skewed, but similar to pint2 with lower exponent
+pint2<-lpint**2
+pint3<-lpint**3
+hist(pint2)
+hist(pint3)
+hist(growr[set2])
+lgrowr<-ifelse(growr[set2]>0, log(growr+1), -log(-growr+1))
+hist(lgrowr)
+
+
+
+# plot expense with each covariate
+
+plot(lwealth, lexpen)
+lines(lowess(lwealth,lexpen), col=2)
+plot(lincome, lexpen)
+lines(lowess(lincome,lexpen), col=2)
+plot(lincome, lexpen)
+lines(lowess(lincome,lexpen), col=2)
+plot(lpop, lexpen)
+lines(lowess(lpop,lexpen), col=2)
+plot(lpop2, lexpen)
+lines(lowess(lpop2,lexpen), col=2)
+plot(lpop3, lexpen)
+lines(lowess(lpop3,lexpen), col=2)
+plot(lpint, lexpen)
+lines(lowess(lpint,lexpen), col=2)
+plot(pint2, lexpen)
+lines(lowess(pint2,lexpen), col=2)
+plot(pint3, lexpen)
+lines(lowess(pint3,lexpen), col=2)
+plot(ldens, lexpen)
+lines(lowess(ldens,lexpen), col=2)
+plot(ldens2, lexpen)
+lines(lowess(ldens2,lexpen), col=2)
+plot(ldens3, lexpen)
+lines(lowess(ldens3,lexpen), col=2)
+plot(lgrowr, lexpen)
+
+
+fit11b<-lm(lexpen~lwealth+lpop+lpop2+lpop3+pint+pint2+pint3+
+             ldens+ldens2+ldens3+income+lgrowr, data=ny2)
+summary(fit11b)
+
+
+#lpop vs lexpen
+plot(lpop[set2], lexpen[set2])
+lines(lowess(lpop[set2],lexpen[set2]), col=2)
+
+#ldens vs lexpen
+plot(ldens[set2], lexpen[set2])
+lines(lowess(ldens[set2], lexpen[set2]), col = 2)
+
+#
+fit11b<-lm(lexpen~lwealth+lpop+lpop2+lpop3+pint+pint2+pint3+
+           ldens+ldens2+ldens3+income+lgrowr, subset=set2)
+stepAIC(fit11b)
+summary(fit11b)
+fit1 = lm(lexpen~lwealth+lpop+log(pint)+ldens+lincome+lgrowr, subset=set2)
+fit1
+summary(fit1)
+
+

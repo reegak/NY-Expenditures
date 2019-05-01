@@ -1,0 +1,319 @@
+% Stat 696: Knitr lab
+% Illustrating knitr to present analyses of College data from ISLR text
+% Packages required: knitr, xtable, stargazer, ISLR
+% To use, make sure to call library(knitr) first in console
+% To run and create a .tex file: knit('knitr_ClassVersion.Rnw') in R
+% September 6, 2018
+
+
+% To show at start of class:
+% -- Step through preface briefly and show where to enter name
+% -- LaTeX preface (preface.tex) vs. Knitr preface (knitr_ClassVersion.Rnw);
+%    briefly delineate two approaches to report writing
+% -- Code in place for regression analysis and prediction
+% -- There are 6 tasks to complete with sample code and hints where needed
+% -- Suggest cutting an pasting R code into console first to debug
+
+
+% Preface required in the knitr RnW file
+\documentclass{article}\usepackage[]{graphicx}\usepackage[]{color}
+%% maxwidth is the original width if it is less than linewidth
+%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+
+\usepackage{rotating}
+\usepackage{graphics}
+\usepackage{latexsym}
+\usepackage{color}
+\usepackage{listings} % allows for importing code scripts into the tex file
+
+% Approximately 1 inch borders all around
+\setlength\topmargin{-.56in}
+\setlength\evensidemargin{0in}
+\setlength\oddsidemargin{0in}
+\setlength\textwidth{6.49in}
+\setlength\textheight{8.6in}
+
+% Options for code listing; from Patrick DeJesus, October 2016
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\lstdefinestyle{mystyle}{
+	backgroundcolor=\color{backcolour},   commentstyle=\color{codegreen},
+	keywordstyle=\color{magenta},
+	numberstyle=\tiny\color{codegray},
+	stringstyle=\color{codepurple},
+	basicstyle=\footnotesize,
+	breakatwhitespace=false,         
+	breaklines=true,                 
+	captionpos=b,                    
+	keepspaces=true,                 
+	numbers=left,                    
+	numbersep=5pt,                  
+	showspaces=false,                
+	showstringspaces=false,
+	showtabs=false,                  
+	tabsize=2
+}
+%"mystyle" code listing set
+\lstset{style=mystyle}
+%\lstset{inputpath=appendix/}
+
+
+\title{Stat 696, Example Application of \texttt{knitr}} 
+\author{Kelso Quan}
+\date{\today}
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\begin{document} 
+
+\maketitle
+
+% Code to start knitr
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Code snippet to load in libraries and data  
+% THIS IS HOW R-CODE IS READ INTO LaTeX DOC WITH knitr
+% Environment:  
+% <<...>>=  
+% [Code here] 
+% @
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+  
+% Code snippet to run the regression analysis, including prediction for two new Universities
+
+
+
+%%%%%%%%%%%%%%
+% Lab Tasks
+%%%%%%%%%%%%%%
+
+%% Task 1: Present an R dump of the summary of the regression fit
+% [Place knitr code chunk here]
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{summary}\hlstd{(fm1)}
+\end{alltt}
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = Apps ~ Private + Elite + Accept + Outstate + Room.Board + 
+##     Grad.Rate, data = College)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -5094.5  -329.7   -22.6   226.8 10114.6 
+## 
+## Coefficients:
+##               Estimate Std. Error t value Pr(>|t|)    
+## (Intercept) -985.95379  204.82380  -4.814 1.78e-06 ***
+## PrivateYes  -291.62328  133.28335  -2.188 0.028970 *  
+## EliteYes    1745.00184  151.74052  11.500  < 2e-16 ***
+## Accept         1.42869    0.02024  70.601  < 2e-16 ***
+## Outstate      -0.01427    0.01690  -0.845 0.398600    
+## Room.Board     0.16615    0.04953   3.355 0.000834 ***
+## Grad.Rate      8.63483    2.94718   2.930 0.003491 ** 
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 1128 on 770 degrees of freedom
+## Multiple R-squared:  0.9157,	Adjusted R-squared:  0.915 
+## F-statistic:  1394 on 6 and 770 DF,  p-value: < 2.2e-16
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+Predictions for the public non elite universities: 7000, 4800, 9300.
+
+Predictions for elite private universities: 2300, 57, 4600.
+% ... allows us to run R-code or grab R elements inside the text.
+% Try it out!  Write a sentence using \Sexpr to grab the predicted values for 
+% the new schools (variables newpred1 and newpred2 from above).
+
+
+
+%% Task 2: Insert a pairwise scatterplot into your document
+% For plots, start by setting up the LaTeX figure environment,
+% then place R code to knit, then set up LaTeX code to complete figure environment.
+% Below I give the code for this task.  You will practice with this code in Task 5.
+\begin{figure}
+\begin{center}
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
+\includegraphics[width=4in]{figure/unnamed-chunk-2-1} 
+
+\end{knitrout}
+\caption{How to determine Eliteness of Colleges}
+\label{y}
+\end{center}
+\end{figure}
+
+
+% Write a short blurb of text to cite your figure.
+
+Pairwise plots shown in figure \ref{y}. It shows pairwise comparisons amongst its factors. 
+
+
+%% Task 3: Use stargazer to present summary statistics of the College data set
+
+% Table created by stargazer v.5.2.2 by Marek Hlavac, Harvard University. E-mail: hlavac at fas.harvard.edu
+% Date and time: Mon, Sep 10, 2018 - 6:33:36 PM
+% Requires LaTeX packages: rotating 
+\begin{sidewaystable}[!htbp] \centering 
+  \caption{Summary statistics for the ISLR College data set.} 
+  \label{descrips} 
+\begin{tabular}{@{\extracolsep{5pt}}lcccccc} 
+\\[-1.8ex]\hline 
+\hline \\[-1.8ex] 
+Statistic & \multicolumn{1}{c}{Mean} & \multicolumn{1}{c}{St. Dev.} & \multicolumn{1}{c}{Min} & \multicolumn{1}{c}{Pctl(25)} & \multicolumn{1}{c}{Pctl(75)} & \multicolumn{1}{c}{Max} \\ 
+\hline \\[-1.8ex] 
+Applicants & 3,001.638 & 3,870.201 & 81 & 776 & 3,624 & 48,094 \\ 
+TotalAccepted & 2,018.804 & 2,451.114 & 72 & 604 & 2,424 & 26,330 \\ 
+TotalEnrolled & 779.973 & 929.176 & 35 & 242 & 902 & 6,392 \\ 
+Top10%HSstudents & 27.559 & 17.640 & 1 & 15 & 35 & 96 \\ 
+Top25%HSstudents & 55.797 & 19.805 & 9 & 41 & 69 & 100 \\ 
+FullTimeStudent & 3,699.907 & 4,850.421 & 139 & 992 & 4,005 & 31,643 \\ 
+PartTimeStudent & 855.299 & 1,522.432 & 1 & 95 & 967 & 21,836 \\ 
+OutofStateTution & 10,440.670 & 4,023.016 & 2,340 & 7,320 & 12,925 & 21,700 \\ 
+RoomBoardPrices & 4,357.526 & 1,096.696 & 1,780 & 3,597 & 5,050 & 8,124 \\ 
+BookPrices & 549.381 & 165.105 & 96 & 470 & 600 & 2,340 \\ 
+PersonalExpense & 1,340.642 & 677.071 & 250 & 850 & 1,700 & 6,800 \\ 
+%Facw/PhD & 72.660 & 16.328 & 8 & 62 & 85 & 103 \\ 
+%Facw/TerminalDeg & 79.703 & 14.722 & 24 & 71 & 92 & 100 \\ 
+S/F Ratio & 14.090 & 3.958 & 2.500 & 11.500 & 16.500 & 39.800 \\ 
+%AlumniDonate & 22.744 & 12.392 & 0 & 13 & 31 & 64 \\ 
+budgetPerStudent & 9,660.171 & 5,221.768 & 3,186 & 6,751 & 10,830 & 56,233 \\ 
+Grad.Rate & 65.463 & 17.178 & 10 & 53 & 78 & 118 \\ 
+\hline \\[-1.8ex] 
+\end{tabular} 
+\end{sidewaystable} 
+
+
+
+%% Task 4: Create a table of predictions using xtable
+% I provide the code below for a base table.  
+% The task is then to add additional columns to the table and create the LaTeX code using xtable.
+% Note that we use results="asis" to force knitr to present the table code for compiling in LaTeX
+
+
+% latex table generated in R 3.5.1 by xtable 1.8-3 package
+% Mon Sep 10 18:33:36 2018
+\begin{table}[ht]
+\centering
+\begin{tabular}{|rrrrrr|}
+  \hline
+1 & 2 & 3 & 4 & 5 & 6 \\ 
+  \hline
+University 1 & No & 0.6 & 7000 & 4800 & 9300 \\ 
+  University 2 & Yes & 0.9 & 2300 & 57 & 4600 \\ 
+   \hline
+\end{tabular}
+\caption{Table of Predictions} 
+\label{predictions}
+\end{table}
+
+
+
+% Write a short blurb citing your table.
+
+Comparisons between universities with predictions in table \ref{predictions}.
+
+%% Task 5: Create an appendix of plots
+% We will create a 2x2 graphic of regression diagnostics
+\newpage
+\noindent \Large{{\bf Appendix A: Supplementary Plots}}
+\begin{figure}[h!]
+\begin{center}
+%%%%%%%%%%%%%%%%
+% Here is code for the default regression diagnostics from R
+% Write knitr code to present a 2x2 graphic for this appendix.
+% Suggestion: use the knitr code environment from the scatterplot matrix of Task 2
+%
+%  par(mfrow=c(2,2))
+%  plot(fm1)
+%
+%%%%%%%%%%%%%%%%%%%
+% [PLACE KNITR CODE CHUNK HERE]
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{par}\hlstd{(}\hlkwc{mfrow}\hlstd{=}\hlkwd{c}\hlstd{(}\hlnum{2}\hlstd{,}\hlnum{2}\hlstd{))}
+\hlkwd{plot}\hlstd{(fm1)}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=\maxwidth]{figure/unnamed-chunk-3-1} 
+
+\end{knitrout}
+
+\caption{Differences among Universities}
+\label{Summary Chart}
+\end{center}
+\end{figure}
+
+% Write a short blurb citing the figure and stating what it is.
+In table \ref{Summary Chart}, it shows the difference between universities. 
+
+%% Task 6: Create an appendix of code
+% Here is the LaTeX code from the online video.
+% Recall that this is straight LaTeX, no knitr code chunk needed!
+%  \newpage
+%  \noindent \Large{{\bf Appendix B: R Code}}
+%  \lstinputlisting[language=R, caption = CAPTION HERE]{CODE FILE NAME HERE}
+
+\newpage
+\noindent \Large{{\bf Appendix B: R Code}}
+\lstinputlisting[language = R, caption = Code Appendix]{knitr_ClassVersion.rnw}
+
+
+\end{document}

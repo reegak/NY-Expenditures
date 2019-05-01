@@ -1,0 +1,35 @@
+\documentclass[11pt]{article}
+\title{My First \LaTeX\ Document}
+\author{Kelso Quan}
+\date{\today}
+
+\begin{document}
+\maketitle
+Hello World!
+
+\begin{itemize}
+\item This is item 1
+\item This is item 2
+\item This is item 3
+\end{itemize}
+
+\begin{equation}
+\label{sample_variance}
+s^2 = \frac{\sum (x_i - \bar{x})^2}{n-1}
+\end{equation}
+
+\begin{table}
+\caption{My Fall 2016 transcript.}
+\label{transcript}
+% Note: in beemer slides class,
+% table numbers do not appear
+\begin{center}
+\begin{tabular}{|r|c|l|} \hline
+Class & Units & Grade \\ \hline
+Stat 696 & 3 & A \\ \hline
+Stat 700 & 3 & A- \\ \hline
+\end{tabular}
+\end{center}
+\end{table}
+
+\end{document}
